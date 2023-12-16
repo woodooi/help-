@@ -29,3 +29,19 @@ async def add_musician(musician_id, first_name, last_name, age, city, musician_t
 
     return result.inserted_id
 
+async def add_event(event_name, event_date, event_location, event_description):
+
+    # existing_event = await collection.find_one({})
+    if not event_name or event_date or event_description:
+        return None
+    
+    event = {
+        "event_name":event_name,
+        "event_date":event_date,
+        "event_location":event_location,
+        "event_description": event_description
+    }
+
+    result = await collection.insert_one(event)
+    return result.inserted_id
+    

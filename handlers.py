@@ -8,7 +8,7 @@ from registration import Registration
 router = Router()
 
 
-@router.message(Command("start"))
+@router.message(Command("/music_reg"))
 async def start_handler(message: types.Message, state: FSMContext):
     await message.answer("Вас вітає реєстраційний бот для музикантів! Давайте розпочнемо.")
     await message.answer("Введіть ID музиканта:")
@@ -60,4 +60,3 @@ async def process_description(message: types.Message, state: FSMContext):
         await message.answer(f"Ви успішно зареєстровані як музикант з ID: {result}")
     else:
         await message.answer("Не вдалося зареєструвати музиканта. Будь ласка, спробуйте знову.")
-
