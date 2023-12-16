@@ -29,3 +29,8 @@ async def add_musician(musician_id, first_name, last_name, age, city, musician_t
 
     return result.inserted_id
 
+
+async def is_musician_registered(musician_id):
+    musician = await collection.find_one({"musician_id": musician_id})
+
+    return musician is not None

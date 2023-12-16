@@ -2,41 +2,56 @@ from aiogram import Router, types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 
-from db import add_musician
+from db import add_musician, is_musician_registered
 from registration import Registration
 
 router = Router()
 
-
 @router.message(Command("start"))
 async def start_handler(message: types.Message, state: FSMContext):
-    await message.answer("Вас вітає реєстраційний бот для музикантів! Давайте розпочнемо.")
-    await message.answer("Введіть ID музиканта:")
-    await state.set_state(Registration.WaitingForID)
+    chat_id = message.from_user.id
 
-@router.message(Registration.WaitingForID)
-async def process_id(message: types.Message, state: FSMContext):
-    await state.update_data(musician_id=message.text)
+    if await is_musician_registered(chat_id):
+        await message.answer("Ви вже зареєстровані в боті.")
+        return
+
+    await message.answer("Вас вітає реєстраційний бот для музикантів! Давайте розпочнемо.")
+    await state.update_data(chat_id=chat_id)
     await message.answer("Введіть ім'я музиканта:")
     await state.set_state(Registration.WaitingForFirstName)
 
+
 @router.message(Registration.WaitingForFirstName)
 async def process_first_name(message: types.Message, state: FSMContext):
+    if not message.text or not message.text.strip():
+        await message.answer("Будь ласка, введіть коректне ім'я музиканта.")
+        return
+
     await state.update_data(first_name=message.text)
     await message.answer("Введіть прізвище музиканта:")
     await state.set_state(Registration.WaitingForLastName)
 
 @router.message(Registration.WaitingForLastName)
 async def process_last_name(message: types.Message, state: FSMContext):
+    if not message.text or not message.text.strip():
+        await message.answer("Будь ласка, введіть коректне прізвище музиканта.")
+        return
+
     await state.update_data(last_name=message.text)
     await message.answer("Введіть вік музиканта:")
     await state.set_state(Registration.WaitingForAge)
 
 @router.message(Registration.WaitingForAge)
 async def process_age(message: types.Message, state: FSMContext):
+
+    if not message.text.isdigit():
+        await message.answer("Будь ласка, введіть коректний вік музиканта (лише цифри).")
+        return
+
     await state.update_data(age=message.text)
     await message.answer("Введіть місто музиканта:")
     await state.set_state(Registration.WaitingForCity)
+
 
 @router.message(Registration.WaitingForCity)
 async def process_city(message: types.Message, state: FSMContext):
@@ -52,12 +67,15 @@ async def process_type(message: types.Message, state: FSMContext):
 
 @router.message(Registration.WaitingForDescription)
 async def process_description(message: types.Message, state: FSMContext):
+    if not message.text or not message.text.strip():
+        await message.answer("Будь ласка, введіть коректний опис музиканта.")
+        return
+
     data = await state.get_data()
-    print(data)
-    result = await add_musician(data['musician_id'], data['first_name'], data['last_name'], data['age'], data['city'],
+    result = await add_musician(data['chat_id'], data['first_name'], data['last_name'], data['age'], data['city'],
                                 data['type'], message.text)
+
     if result:
         await message.answer(f"Ви успішно зареєстровані як музикант з ID: {result}")
     else:
         await message.answer("Не вдалося зареєструвати музиканта. Будь ласка, спробуйте знову.")
-
