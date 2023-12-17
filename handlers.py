@@ -2,11 +2,13 @@ from aiogram import Router, types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram import F
+from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
 
 from db import add_musician, is_musician_registered
 from registration import Registration
 
 router = Router()
+available_types = ["Guitarist", "Pianist", "Violinist", "Drummer", "Singer", "Bassist"] 
 
 @router.message(Command("start"), F.text)
 async def start_handler(message: types.Message, state: FSMContext):
@@ -57,14 +59,16 @@ async def process_age(message: types.Message, state: FSMContext):
 @router.message(Registration.WaitingForCity)
 async def process_city(message: types.Message, state: FSMContext):
     await state.update_data(city=message.text)
-    await message.answer("Введіть тип музиканта:")
+    keyboard_buttons = [KeyboardButton(text=musician_type) for musician_type in available_types]
+    keyboard = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=[keyboard_buttons])
+    await message.answer("Виберіть тип музиканта:", reply_markup=keyboard)
     await state.set_state(Registration.WaitingForType)
 
 @router.message(Registration.WaitingForType)
 async def process_type(message: types.Message, state: FSMContext):
     await state.update_data(type=message.text)
     await message.answer("Введіть опис музиканта:")
-    await state.set_state(Registration.WaitingForDescription)
+    await state.set_state(Registration.WaitingForDescription, reply_markup=ReplyKeyboardRemove(remove_keyboard=True))
 
 @router.message(Registration.WaitingForDescription)
 async def process_description(message: types.Message, state: FSMContext):
