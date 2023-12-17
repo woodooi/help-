@@ -1,7 +1,7 @@
 from aiogram import Router, types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
-from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
+from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
 
 from db import add_musician
 from registration import Registration
@@ -51,7 +51,7 @@ async def process_city(message: types.Message, state: FSMContext):
 @router.message(Registration.WaitingForType)
 async def process_type(message: types.Message, state: FSMContext):
     await state.update_data(type=message.text)
-    await message.answer("Введіть опис музиканта:")
+    await message.answer("Введіть опис музиканта:", reply_markup=ReplyKeyboardRemove(remove_keyboard=True))
     await state.set_state(Registration.WaitingForDescription)
 
 @router.message(Registration.WaitingForDescription)
