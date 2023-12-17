@@ -1,13 +1,14 @@
 from aiogram import Router, types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
+from aiogram import F
 
 from db import add_musician, is_musician_registered
 from registration import Registration
 
 router = Router()
 
-@router.message(Command("start"))
+@router.message(Command("start"), F.text)
 async def start_handler(message: types.Message, state: FSMContext):
     chat_id = message.from_user.id
 
@@ -21,7 +22,7 @@ async def start_handler(message: types.Message, state: FSMContext):
     await state.set_state(Registration.WaitingForFirstName)
 
 
-@router.message(Registration.WaitingForFirstName)
+@router.message(Registration.WaitingForFirstName, F.text)
 async def process_first_name(message: types.Message, state: FSMContext):
     if not message.text or not message.text.strip():
         await message.answer("Будь ласка, введіть коректне ім'я музиканта.")
@@ -31,7 +32,7 @@ async def process_first_name(message: types.Message, state: FSMContext):
     await message.answer("Введіть прізвище музиканта:")
     await state.set_state(Registration.WaitingForLastName)
 
-@router.message(Registration.WaitingForLastName)
+@router.message(Registration.WaitingForLastName, F.text)
 async def process_last_name(message: types.Message, state: FSMContext):
     if not message.text or not message.text.strip():
         await message.answer("Будь ласка, введіть коректне прізвище музиканта.")
