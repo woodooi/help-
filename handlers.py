@@ -1,14 +1,16 @@
 from aiogram import Router, types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
+from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
 
 from db import add_musician
 from registration import Registration
 
 router = Router()
 
+available_types = ["Guitarist", "Pianist", "Violinist", "Drummer", "Singer", "Bassist"]  # Add more types as needed
 
-@router.message(Command("/music_reg"))
+@router.message(Command("music_reg"))
 async def start_handler(message: types.Message, state: FSMContext):
     await message.answer("Вас вітає реєстраційний бот для музикантів! Давайте розпочнемо.")
     await message.answer("Введіть ID музиканта:")
@@ -41,8 +43,10 @@ async def process_age(message: types.Message, state: FSMContext):
 @router.message(Registration.WaitingForCity)
 async def process_city(message: types.Message, state: FSMContext):
     await state.update_data(city=message.text)
-    await message.answer("Введіть тип музиканта:")
-    await state.set_state(Registration.WaitingForType)
+    keyboard_buttons = [KeyboardButton(text=musician_type) for musician_type in available_types]
+    keyboard = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=[keyboard_buttons])
+    await message.answer("Виберіть тип музиканта:", reply_markup=keyboard)
+    await state.set_state(Registration.WaitingForType) 
 
 @router.message(Registration.WaitingForType)
 async def process_type(message: types.Message, state: FSMContext):
@@ -52,10 +56,11 @@ async def process_type(message: types.Message, state: FSMContext):
 
 @router.message(Registration.WaitingForDescription)
 async def process_description(message: types.Message, state: FSMContext):
+    await state.update_data(description=message.text)
     data = await state.get_data()
     print(data)
     result = await add_musician(data['musician_id'], data['first_name'], data['last_name'], data['age'], data['city'],
-                                data['type'], message.text)
+                                data['type'], data['description'])
     if result:
         await message.answer(f"Ви успішно зареєстровані як музикант з ID: {result}")
     else:
