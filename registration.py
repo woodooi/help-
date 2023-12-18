@@ -8,4 +8,6 @@ class Registration(StatesGroup):
     WaitingForAge = State()
     WaitingForCity = State()
     WaitingForType = State()
+    WaitingForPic = State()
     WaitingForDescription = State()
+    WaitingForDemo = State()

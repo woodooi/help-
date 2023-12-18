@@ -7,7 +7,7 @@ musicians = cluster.Help_Musician_DB.user
 events = cluster.Help_Musician_DB.events
 
 
-async def add_musician(musician_id, first_name, last_name, age, city, musician_type, description):
+async def add_musician(musician_id, first_name, last_name, age, city, pic, demo, musician_type, description):
 
     existing_musician = await musicians.find_one({"$or": [{"musician_id": musician_id}, {"first_name": first_name, "last_name": last_name}]})
     if existing_musician:
@@ -23,6 +23,8 @@ async def add_musician(musician_id, first_name, last_name, age, city, musician_t
         "age": age,
         "city": city,
         "type": musician_type,
+        "picture": pic,
+        "demo": demo,
         "description": description
     }
 
