@@ -3,16 +3,20 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 
 from db import add_event
-from event_registration import EventRegistration
+from event.states.event_reg_states import EventRegistration
 
 event_registration_router = Router()
 
 
 @event_registration_router.message(Command("event_reg"))
 async def start_handler(message: types.Message, state: FSMContext):
-    await message.answer("Введіть назву")
-    await state.set_state(EventRegistration.WaitingForName)
+    await message.answer("Що ви хочете зареєструвати сьогодні?")
+    await state.set_state(EventRegistration.WaitingForType)
 
+@event_registration_router.message(EventRegistration.WaitingForType)
+async def set_type(message: types.Message, state: FSMContext):
+    await message.answer("ярик, тут кнопки примастери")
+    await state.set_state(EventRegistration.WaitingForName)
 
 @event_registration_router.message(EventRegistration.WaitingForName)
 async def set_name(message: types.Message, state: FSMContext):

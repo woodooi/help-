@@ -3,13 +3,13 @@ import asyncio
 from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
 
-from event_heandlers import event_registration_router
-from event_reg_handler import router
-from handlers import bot
+from elems.event.handlers.event_reg_handler import event_registration_router
+from elems.user.handlers.user_reg_handler import router
+from bot import bot
 
 import logging
 
-from search_hendler import search_musicians
+from elems.user.handlers.user_search_handler import search_musicians
 
 
 
