@@ -1,4 +1,4 @@
-from db import musicians
+from .db import musicians
 
 async def add_musician(musician_id, first_name, last_name, age, city, pic, demo, musician_type, description):
 

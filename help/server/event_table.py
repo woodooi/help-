@@ -1,4 +1,4 @@
-from db import events
+from .db import events
 
 
 async def add_event(event_name, event_date, event_location, event_description):
