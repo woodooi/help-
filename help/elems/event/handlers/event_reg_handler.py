@@ -3,7 +3,7 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 
 from ...server import add_event
-from event.states.event_reg_states import Registration
+from ..states.event_reg_states import Registration
 
 event_registration_router = Router()
 
