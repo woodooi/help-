@@ -5,19 +5,9 @@ from ..states.user_search_states import Search
 
 from ...server import find_musicians_by_city_type
 
+from .user_profile_handler import return_card
+
 search_musicians = Router()
-
-
-def format_musician(index, musician):
-    formatted_text = (
-        f"<b>Musician #{index}</b>\n"
-        f"<i>Name:</i> {musician.get('first_name', '')} {musician.get('last_name', '')}\n"
-        f"<i>Age:</i> {musician.get('age', '')}\n"
-        f"<i>City:</i> {musician.get('city', '')}\n"
-        f"<i>Type:</i> {musician.get('type', '')}\n"
-        f"<i>Description:</i> {musician.get('description', '')}\n"
-    )
-    return formatted_text
 
 
 @search_musicians.message(Command('search_musicians'))
@@ -45,9 +35,9 @@ async def process_search_type(message: types.Message, state: FSMContext):
     musicians = await find_musicians_by_city_type(city, musician_type)
 
     if musicians:
-        for index, musician in enumerate(musicians):
-            formatted_musician = format_musician(index + 1, musician)
-            await message.answer(formatted_musician)
+        for musician in musicians:
+            card = return_card(musician)
+            await message.answer(card)
     else:
         await message.answer("No musicians found.")
 
