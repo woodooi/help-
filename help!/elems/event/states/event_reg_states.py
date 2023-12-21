@@ -1,6 +1,6 @@
 from aiogram.fsm.state import StatesGroup, State
 
-class EventRegistration(StatesGroup):
+class Registration(StatesGroup):
     waitingForType = State()
     WaitingForName = State()
     WaitingForDate = State()
