@@ -33,7 +33,7 @@ async def find_self_by_id(musician_id):
 
 
 async def find_musicians_by_city_type(city, musician_type):
-    query = {"city": city, "type": musician_type}
+    query = {"city": city, "type":{ "&$in": musician_type}}
 
     result = await musicians.find(query).to_list(length=None)
 
