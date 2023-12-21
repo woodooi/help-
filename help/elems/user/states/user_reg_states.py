@@ -1,7 +1,7 @@
 from aiogram.fsm.state import StatesGroup, State
 
 
-class Registration(StatesGroup):
+class UserRegistration(StatesGroup):
     WaitingForID = State()
     WaitingForFirstName = State()
     WaitingForLastName = State()

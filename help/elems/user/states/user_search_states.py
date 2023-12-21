@@ -1,6 +1,6 @@
 from aiogram.fsm.state import StatesGroup, State
 
 
-class Search(StatesGroup):
+class UserSearch(StatesGroup):
     WaitingForCity = State()
     WaitingForType = State()

@@ -3,7 +3,6 @@ import asyncio
 from aiogram import Dispatcher
 
 from help.elems.event.handlers.event_reg_handler import event_registration_router
-from help.elems.user.handlers.user_reg_handler import router
 from help.elems.event.handlers.event_output_handler import event_output_router
 from help.elems.user.handlers.user_reg_handler import registration_router
 from help.elems.user.handlers.user_profile_handler import profile_router
