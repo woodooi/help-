@@ -7,8 +7,8 @@ from io import BytesIO
 
 from handlers import bot
 
-from db import add_musician, is_musician_registered
-from registration import Registration
+from ...server import add_musician, is_musician_registered
+from ..states.user_reg_states import Registration
 
 router = Router()
 

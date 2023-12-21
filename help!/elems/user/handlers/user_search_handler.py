@@ -1,9 +1,9 @@
 from aiogram import Router, types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
-from event_search import EventSearch
+from ..states.user_search_states import Search
 
-from db import find_musicians_by_city_type
+from ...server import find_musicians_by_city_type
 
 search_musicians = Router()
 
@@ -23,18 +23,18 @@ def format_musician(index, musician):
 @search_musicians.message(Command('search_musicians'))
 async def start_search_handler(message: types.Message, state: FSMContext):
     await message.answer("Введи місто:")
-    await state.set_state(EventSearch.WaitingForCity)
+    await state.set_state(Search.WaitingForCity)
 
 
-@search_musicians.message(EventSearch.WaitingForCity)
+@search_musicians.message(Search.WaitingForCity)
 async def process_search_city(message: types.Message, state: FSMContext):
     await state.update_data(city=message.text)
 
     await message.answer("Введи тип музиканта:")
-    await state.set_state(EventSearch.WaitingForType)
+    await state.set_state(Search.WaitingForType)
 
 
-@search_musicians.message(EventSearch.WaitingForType)
+@search_musicians.message(Search.WaitingForType)
 async def process_search_type(message: types.Message, state: FSMContext):
     await state.update_data(type=message.text)
 
