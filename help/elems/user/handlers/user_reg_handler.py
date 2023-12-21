@@ -77,21 +77,23 @@ async def process_city(message: types.Message, state: FSMContext):
 @registration_router.message(UserRegistration.WaitingForType)
 async def process_type(message: types.Message, state: FSMContext):
     await state.update_data(type=message.text)
-    await message.answer("Надішліть фото для профілю. Введіть 1 для використання останнього фото профілю телеграм:")
+    await message.answer("Надішліть фото для профілю. Введіть 1 для використання останнього фото профілю телеграм(При відправленні фото - поставте галочку біля Стистунти зображення):")
     await state.set_state(UserRegistration.WaitingForPic)
 
 @registration_router.message(UserRegistration.WaitingForPic)
 async def process_pic(message: types.Message, state: FSMContext):
     if message.photo:
+        await message.answer("1")
         file_id = message.photo[0].file_id
         await state.update_data(pic=file_id)
     elif str(message.text) == "1":
         user_photos = await bot.get_user_profile_photos(message.from_user.id)
         await state.update_data(pic=user_photos.photos[0][0].file_id)
     elif message.document:
+        await message.answer("2")
         photo = await bot.download(message.document, BytesIO())
         input_photo = BufferedInputFile(photo.getvalue(), message.document.file_name)
-        await state.update_data(pic=input_photo.filename)
+        await state.update_data(pic=input_photo)
         await state.set_state(UserRegistration.WaitingForDemo)
     elif message.text:
         await message.answer("Комісія") 
