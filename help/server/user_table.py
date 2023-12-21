@@ -1,6 +1,6 @@
 from .db import musicians
 
-async def add_musician(musician_id, first_name, last_name, age, city, pic, demo, musician_type, description):
+async def add_musician(musician_id, username, first_name, last_name, age, city, musician_type, pic, demo, description):
 
     existing_musician = await musicians.find_one({"$or": [{"musician_id": musician_id}, {"first_name": first_name, "last_name": last_name}]})
     if existing_musician:
@@ -11,6 +11,7 @@ async def add_musician(musician_id, first_name, last_name, age, city, pic, demo,
 
     musician = {
         "musician_id": musician_id,
+        "username": username,
         "first_name": first_name,
         "last_name": last_name,
         "age": age,
@@ -25,11 +26,11 @@ async def add_musician(musician_id, first_name, last_name, age, city, pic, demo,
 
     return result.inserted_id
 
-
-async def is_musician_registered(musician_id):
+async def find_self_by_id(musician_id):
     musician = await musicians.find_one({"musician_id": musician_id})
 
-    return musician is not None
+    return musician 
+
 
 async def find_musicians_by_city_type(city, musician_type):
     query = {"city": city, "type": musician_type}
