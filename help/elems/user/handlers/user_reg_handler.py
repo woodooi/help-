@@ -2,13 +2,21 @@ from aiogram import Router, types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram import F
-from aiogram.types import BufferedInputFile
+from aiogram.types import BufferedInputFile, KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from io import BytesIO
+
 
 from ....bot import bot
 
 from ...server import add_musician, find_self_by_id
 from ..states.user_reg_states import UserRegistration
+
+available_types = ["Guitarist", "Pianist", "Violinist", "Drummer", "Singer", "Bassist", "End Operation"] 
+types_to_user = set()
+
+type_keyboard = [
+    [KeyboardButton(text=music_type) for music_type in available_types]
+]
 
 registration_router = Router()
 
@@ -71,14 +79,18 @@ async def process_age(message: types.Message, state: FSMContext):
 @registration_router.message(UserRegistration.WaitingForCity)
 async def process_city(message: types.Message, state: FSMContext):
     await state.update_data(city=message.text)
-    await message.answer("Введіть вашу масть(поки шо одну):")
+    await message.answer("Введіть вашу масть(поки шо одну):", reply_markup=type_keyboard)
     await state.set_state(UserRegistration.WaitingForType)
 
 @registration_router.message(UserRegistration.WaitingForType)
 async def process_type(message: types.Message, state: FSMContext):
-    await state.update_data(type=message.text)
-    await message.answer("Надішліть фото для профілю. Введіть 1 для використання останнього фото профілю телеграм:")
-    await state.set_state(UserRegistration.WaitingForPic)
+    if message.text not in available_types:
+        await message.answer("she raz")
+    elif message.text=="End":    
+        await state.update_data(type=message.text)
+        await message.answer("Надішліть фото для профілю. Введіть 1 для використання останнього фото профілю телеграм:")
+        await state.set_state(UserRegistration.WaitingForPic)
+    types_to_user.add(message.text)    
 
 @registration_router.message(UserRegistration.WaitingForPic)
 async def process_pic(message: types.Message, state: FSMContext):
