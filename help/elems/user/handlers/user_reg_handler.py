@@ -20,6 +20,8 @@ type_keyboard = [
 
 registration_router = Router()
 
+keyboard_for_reg = ReplyKeyboardMarkup(keyboard=type_keyboard)
+
 @registration_router.message(Command("registration"), F.text)
 async def start_handler(message: types.Message, state: FSMContext):
     chat_id = message.from_user.id
@@ -79,16 +81,17 @@ async def process_age(message: types.Message, state: FSMContext):
 @registration_router.message(UserRegistration.WaitingForCity)
 async def process_city(message: types.Message, state: FSMContext):
     await state.update_data(city=message.text)
-    keyboard_for_reg = ReplyKeyboardMarkup(keyboard=type_keyboard)
     await message.answer("Введіть вашу масть(поки шо одну):", reply_markup=keyboard_for_reg)
     await state.set_state(UserRegistration.WaitingForType)
 
 @registration_router.message(UserRegistration.WaitingForType)
 async def process_type(message: types.Message, state: FSMContext):
     if message.text not in available_types:
-        await message.answer("she raz")
-    elif message.text=="End Operation":    
-        await state.update_data(type=message.text)
+        await message.answer("she raz", reply_markup=keyboard_for_reg)
+        return
+    elif message.text == "End Operation":
+        output_string = ", ".join(str(_type) for _type in types_to_user)    
+        await state.update_data(type=output_string)
         await message.answer("Надішліть фото для профілю. Введіть 1 для використання останнього фото профілю телеграм:", reply_markup=ReplyKeyboardRemove(remove_keyboard=True))
         await state.set_state(UserRegistration.WaitingForPic)
     types_to_user.add(message.text)    

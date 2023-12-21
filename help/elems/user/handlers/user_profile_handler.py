@@ -11,6 +11,7 @@ from ...server import find_self_by_id
 profile_router = Router()
 
 def return_card(musician):
+    
     formatted_text = (
         f"<b>|#| Музи́ка: {musician.get('first_name', '')} {musician.get('last_name', '')}</b>\n"
         f"<b>|#| Вік:</b> {musician.get('age', '')}\n"
