@@ -5,7 +5,7 @@ from aiogram import F
 from aiogram.types import BufferedInputFile
 from io import BytesIO
 
-from bot import bot
+from handlers import bot
 
 from db import add_musician, is_musician_registered
 from registration import Registration

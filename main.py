@@ -4,8 +4,8 @@ from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
 
 from event_heandlers import event_registration_router
-from handlers import router
-from bot import bot
+from event_reg_handler import router
+from handlers import bot
 
 import logging
 
