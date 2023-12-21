@@ -1,21 +1,30 @@
 from aiogram import Router, types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
+from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
 
 from ...server import add_event
 from ..states.event_reg_states import Registration
 
 event_registration_router = Router()
 
+event_options = ["Concert", "Kvartirnik", "Audition", "Rehersal", "Gig", "Recording", "Tutor"]
+
+event_type_opt = [
+    [KeyboardButton(text=option) for option in event_options]
+]
+
 
 @event_registration_router.message(Command("event_reg"))
 async def start_handler(message: types.Message, state: FSMContext):
-    await message.answer("Що ви хочете зареєструвати сьогодні?")
+    keyboard = ReplyKeyboardMarkup(keyboard=event_type_opt)
+    await message.answer("Що ви хочете зареєструвати сьогодні?", reply_markup=keyboard)
     await state.set_state(Registration.WaitingForType)
 
 @event_registration_router.message(Registration.WaitingForType)
 async def set_type(message: types.Message, state: FSMContext):
-    await message.answer("ярик, тут кнопки примастери")
+    await state.update_data(event_type=message.text)
+    await message.answer("Введіть ім'я", reply_markup=ReplyKeyboardRemove(remove_keyboard=True))
     await state.set_state(Registration.WaitingForName)
 
 @event_registration_router.message(Registration.WaitingForName)
