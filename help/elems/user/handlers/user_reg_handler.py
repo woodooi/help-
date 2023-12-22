@@ -40,6 +40,7 @@ async def process_first_name(message: types.Message, state: FSMContext):
     await message.answer("Введіть ім'я. Правила ті ж самі - надішліть 1 щоб використовувати ім'я з телеграму :")
     await state.set_state(UserRegistration.WaitingForLastName)
 
+
 @registration_router.message(UserRegistration.WaitingForLastName, F.text)
 async def process_last_name(message: types.Message, state: FSMContext):
     if not message.text or not message.text.strip():
@@ -50,7 +51,7 @@ async def process_last_name(message: types.Message, state: FSMContext):
     else:
         await state.update_data(last_name=message.text)
     await message.answer("Ваш вік:")
-    await state.set_state(UserRegistration.WaitingForAge)    
+    await state.set_state(UserRegistration.WaitingForAge)
     
 
 @registration_router.message(UserRegistration.WaitingForAge)
@@ -88,10 +89,12 @@ async def process_pic(message: types.Message, state: FSMContext):
     elif str(message.text) == "1":
         user_photos = await bot.get_user_profile_photos(message.from_user.id)
         await state.update_data(pic=user_photos.photos[0][0].file_id)
+        await message.answer_photo(user_photos.photos[0][0].file_id)
     elif message.document:
         photo = await bot.download(message.document, BytesIO())
         input_photo = BufferedInputFile(photo.getvalue(), message.document.file_name)
-        await state.update_data(pic=input_photo.filename)
+        await state.update_data(pic=input_photo)
+        await message.answer_photo(input_photo)
         await state.set_state(UserRegistration.WaitingForDemo)
     elif message.text:
         await message.answer("Комісія") 
@@ -103,14 +106,15 @@ async def process_pic(message: types.Message, state: FSMContext):
 async def process_demo(message: types.Message, state: FSMContext):
     if message.text == "1":
         await state.set_state(UserRegistration.WaitingForDescription)
-        await state.update_data(demo="")
-    elif message.voice:
+    if message.voice:
         file_id = message.voice.file_id
         await state.update_data(demo=file_id)
+        await message.answer_voice(file_id)
         await state.set_state(UserRegistration.WaitingForDescription)
     elif message.audio:
         file_id = message.audio.file_id
         await state.update_data(demo=file_id)
+        await message.answer_audio(file_id)
     else: 
         await message.answer("Не чує баба! Спробуйте ще раз!")
     await message.answer("Останній крок! Надішліть опис свого профілю: ")
@@ -123,7 +127,6 @@ async def process_description(message: types.Message, state: FSMContext):
         return
 
     data = await state.get_data()
-    print(data)
     result = await add_musician(data['chat_id'], 
                                 data['username'],
                                 data['first_name'], 
@@ -138,4 +141,5 @@ async def process_description(message: types.Message, state: FSMContext):
         await message.answer(f"Ви успішно зареєстровані як музикант з ID: {result}")
     else:
         await message.answer("Не вдалося зареєструвати музиканта. Будь ласка, спробуйте знову.")
+
     await state.clear()

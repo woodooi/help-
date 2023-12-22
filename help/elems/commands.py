@@ -28,6 +28,10 @@ async def set_commands(bot: Bot):
         BotCommand(
             command="profile",
             description="Ваш профіль"
+        ),
+        BotCommand(
+            command="update_musicians",
+            description="Оновлення даних музиканта"
         )
     ]
     await bot.set_my_commands(commands, scope=BotCommandScopeDefault())

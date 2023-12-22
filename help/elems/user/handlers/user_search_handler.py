@@ -40,4 +40,4 @@ async def process_search_type(message: types.Message, state: FSMContext):
             await message.answer(card)
     else:
         await message.answer("No musicians found.")
-
+    await state.clear()
