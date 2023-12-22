@@ -89,12 +89,12 @@ async def process_type(message: types.Message, state: FSMContext):
     if message.text not in available_types:
         await message.answer("she raz", reply_markup=keyboard_for_reg)
         return
-    elif message.text == "End Operation":
-        output_string = ", ".join(str(_type) for _type in types_to_user)    
-        await state.update_data(type=output_string)
+    elif message.text == "End Operation":  
+        await state.update_data(type=list(types_to_user))
         await message.answer("Надішліть фото для профілю. Введіть 1 для використання останнього фото профілю телеграм:", reply_markup=ReplyKeyboardRemove(remove_keyboard=True))
         await state.set_state(UserRegistration.WaitingForPic)
-    types_to_user.add(message.text)    
+    elif message.text !="End Operation":    
+        types_to_user.add(message.text)    
 
 @registration_router.message(UserRegistration.WaitingForPic)
 async def process_pic(message: types.Message, state: FSMContext):
