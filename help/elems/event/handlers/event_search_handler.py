@@ -28,6 +28,7 @@ async def process_query(message:types.Message, state:FSMContext):
     await state.update_data(event_city=message.text)
 
     data = await state.get_data()
+    await state.clear()
     event_type = data['event_type']
     city = data['event_city']
 

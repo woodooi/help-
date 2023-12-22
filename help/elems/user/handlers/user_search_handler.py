@@ -31,6 +31,7 @@ async def process_search_type(message: types.Message, state: FSMContext):
     await state.update_data(type=message.text)
 
     data = await state.get_data()
+    await state.clear()
     city = data.get("city")
     musician_type = data.get("type")
 

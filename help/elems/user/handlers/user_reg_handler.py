@@ -93,7 +93,7 @@ async def process_type(message: types.Message, state: FSMContext):
         await state.update_data(type=list(types_to_user))
         await message.answer("Надішліть фото для профілю. Введіть 1 для використання останнього фото профілю телеграм:", reply_markup=ReplyKeyboardRemove(remove_keyboard=True))
         await state.set_state(UserRegistration.WaitingForPic)
-    elif message.text !="End Operation":    
+    else:    
         types_to_user.add(message.text)    
 
 @registration_router.message(UserRegistration.WaitingForPic)

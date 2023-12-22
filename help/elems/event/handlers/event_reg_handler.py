@@ -23,6 +23,9 @@ async def start_handler(message: types.Message, state: FSMContext):
 
 @event_registration_router.message(Registration.WaitingForType)
 async def set_type(message: types.Message, state: FSMContext):
+    if message.text not in event_options:
+        await message.answer("Тицяйте на кнопку!")
+        return
     await state.update_data(event_type=message.text)
     await message.answer("Введіть ім'я", reply_markup=ReplyKeyboardRemove(remove_keyboard=True))
     await state.set_state(Registration.WaitingForName)
@@ -52,6 +55,7 @@ async def set_location(message: types.Message, state: FSMContext):
 async def set_date(message: types.Message, state: FSMContext):
     await state.update_data(event_description=message.text)
     data = await state.get_data()
+    await state.clear()
     event_to_add = await add_event(data['event_name'], data['event_date'], data['event_location'],
                                    data['event_description'], data['event_type'])
     if event_to_add:
