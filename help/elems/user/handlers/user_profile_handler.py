@@ -2,13 +2,21 @@ from aiogram import Router, types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram import F
-from aiogram.types import BufferedInputFile
+from aiogram.types import BufferedInputFile, KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from io import BytesIO
 from aiogram.types import Audio, Voice
 
 from ...server import find_self_by_id
+from ..states.user_edit_states import UserEdit
+from ....server.user_table import musicians
 
 profile_router = Router()
+
+fields = ["first_name", "last_name", "age","city","type", "description"]
+
+keyboard_fields = [
+    [KeyboardButton(text=field) for field in fields]
+]
 
 def return_card(musician):
     
@@ -33,3 +41,31 @@ async def show_your_profile(message: types.Message):
         await message.answer_audio(demo, caption="їх гра!")
     elif type(demo) == Voice:
         await message.answer_voice(demo, caption="їх гра!")
+
+@profile_router.message(Command("edit_profile"), F.text)
+async def start_edit_profile(message:types.Message, state:FSMContext):
+    options = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=keyboard_fields)
+    await message.answer("Що ви хочете змінити?", reply_markup=options)
+    await state.set_state(UserEdit.WaitingForTarget)
+
+@profile_router.message(UserEdit.WaitingForTarget)
+async def process_editing(message:types.Message, state:FSMContext):
+    await state.update_data(target_field=message.text)
+    await message.answer("введіть нове значення", reply_markup=ReplyKeyboardRemove(remove_keyboard=True))
+    await state.set_state(UserEdit.WaitingForQuery)
+
+@profile_router.message(UserEdit.WaitingForQuery)
+async def editing(message:types.Message, state:FSMContext):
+    await state.update_data(new_value=message.text)
+    data = await state.get_data()
+
+    find_my_profile = {"musician_id": message.from_user.id}
+
+    edit = {"$set": {str(data["target_field"]): data["new_value"]}} #probably doesn`t work, also need to fix 
+                                                                    #button names or solve this problemik
+    result = musicians.update_one(find_my_profile, edit)
+    if result:
+        await message.answer("Updated_successfully")
+        print(data["target_field"])
+        print(data["new_value"])    
+    return result
