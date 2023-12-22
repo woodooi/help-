@@ -18,11 +18,12 @@ from help.elems.user.handlers.user_search_handler import search_musicians
 
 async def main():
     dp = Dispatcher()
+
+    dp.include_router(search_event)
     dp.include_router(registration_router)
     dp.include_router(event_registration_router)
     dp.include_router(search_musicians)
     dp.include_router(event_output_router)
-    dp.include_router(search_event)
 
     await set_commands(bot)
     dp.include_router(profile_router)

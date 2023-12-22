@@ -26,4 +26,5 @@ async def get_all_events_handler(message: types.Message):
             formated_event = format_event(event)
             await message.answer(formated_event)
     else:
-        await message.answer("Не має івентів")
+        await message.answer("Немає івентів")
+        
