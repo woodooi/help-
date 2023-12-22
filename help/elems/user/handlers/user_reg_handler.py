@@ -20,7 +20,7 @@ type_keyboard = [
 
 registration_router = Router()
 
-keyboard_for_reg = ReplyKeyboardMarkup(keyboard=type_keyboard)
+keyboard_for_reg = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=type_keyboard)
 
 @registration_router.message(Command("registration"), F.text)
 async def start_handler(message: types.Message, state: FSMContext):
