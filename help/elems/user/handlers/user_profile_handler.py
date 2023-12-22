@@ -10,6 +10,7 @@ from ...server import find_self_by_id
 from ..states.user_edit_states import UserEdit
 from ..states.user_reg_states import UserRegistration
 from ....server.user_table import musicians
+from .user_reg_handler import keyboard_for_reg, available_types, types_to_user
 
 profile_router = Router()
 
@@ -55,21 +56,29 @@ async def process_editing(message:types.Message, state:FSMContext):
     if message.text == "age":
         await message.answer("З днем народження!")
     await state.update_data(target_field=message.text)
-    await message.answer("Введіть нове значення", reply_markup=ReplyKeyboardRemove(remove_keyboard=True))
-    await state.set_state(UserEdit.WaitingForQuery)
+    if message.text == "type":
+        await message.answer("Отже, діапазон виших музичних навичок збільшився. Вітаємо!", reply_markup=ReplyKeyboardRemove(remove_keyboard=True))
+        await message.answer("Введіть нові значення", reply_markup=keyboard_for_reg)
+        await state.set_state(UserEdit.WaitingForQuery)
+    else:    
+        await message.answer("Введіть нові значення", reply_markup=ReplyKeyboardRemove(remove_keyboard=True))
+        await state.set_state(UserEdit.WaitingForQuery)
 
 @profile_router.message(UserEdit.WaitingForQuery)
 async def editing(message:types.Message, state:FSMContext):
-    await state.update_data(new_value=message.text)
-    data = await state.get_data()
-    await state.clear()
+    if not message.text or message.text not in available_types:
+        await message.answer("she rax")
+    elif message.text == "End Operation":   
+        await state.update_data(new_value=list(types_to_user))
+        data = await state.get_data()
+        await state.clear()
 
-    find_my_profile = {"musician_id": message.from_user.id}
+        find_my_profile = {"musician_id": message.from_user.id}
 
-    edit = {"$set": {str(data["target_field"]): data["new_value"]}} #probably doesn`t work, also need to fix 
-                                                                    #button names or solve this problemik
-                                                                    #seems to work, hz)
-    result = musicians.update_one(find_my_profile, edit)
-    if result:
-        await message.answer("Updated_successfully")   
-    return result
+        edit = {"$set": {str(data["target_field"]): data["new_value"]}} 
+        result = musicians.update_one(find_my_profile, edit)
+        if result:
+            await message.answer("Updated_successfully", reply_markup=ReplyKeyboardRemove(remove_keyboard=True))   
+        return result
+    else:
+        types_to_user.add(message.text)

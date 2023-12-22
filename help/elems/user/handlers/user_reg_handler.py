@@ -44,7 +44,7 @@ async def process_first_name(message: types.Message, state: FSMContext):
         await message.answer("Будь ласка, введіть коректне ім'я музиканта.")
         return
     if message.text == "1":
-        await state.update_data(first_name=message.from_user.last_name)
+        await state.update_data(first_name=message.from_user.first_name)
     else:
         await state.update_data(first_name=message.text)
     await message.answer("Введіть ім'я. Правила ті ж самі - надішліть 1 щоб використовувати ім'я з телеграму :")
@@ -56,7 +56,7 @@ async def process_last_name(message: types.Message, state: FSMContext):
         await message.answer("Будь ласка, введіть коректне прізвище музиканта.")
         return
     elif message.text == "1":
-        await state.update_data(last_name=message.from_user.first_name)
+        await state.update_data(last_name=message.from_user.last_name)
     else:
         await state.update_data(last_name=message.text)
     await message.answer("Ваш вік:")

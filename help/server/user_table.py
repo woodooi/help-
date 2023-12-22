@@ -6,8 +6,14 @@ async def add_musician(musician_id, username, first_name, last_name, age, city, 
     if existing_musician:
         return None
 
-    if not musician_id or not first_name or not last_name:
+    if not musician_id:
         return None
+    
+    if not first_name:
+        first_name = " "
+
+    if not last_name:
+        last_name = " "
 
     musician = {
         "musician_id": musician_id,
