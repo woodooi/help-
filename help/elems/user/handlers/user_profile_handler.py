@@ -68,7 +68,7 @@ async def process_editing(message:types.Message, state:FSMContext):
 async def editing(message:types.Message, state:FSMContext):
     if not message.text or message.text not in available_types:
         await message.answer("she rax")
-    elif message.text == "End Operation":   
+    elif message.text == "Наст. крок":   
         await state.update_data(new_value=list(types_to_user))
         data = await state.get_data()
         await state.clear()

@@ -42,5 +42,5 @@ async def process_search_type(message: types.Message, state: FSMContext):
             card = return_card(musician)
             await message.answer(card)
     else:
-        await message.answer("No musicians found.", reply_markup=ReplyKeyboardRemove(remove_keyboard=True))
+        await message.answer("Музикантів не знайдено.", reply_markup=ReplyKeyboardRemove(remove_keyboard=True))
 

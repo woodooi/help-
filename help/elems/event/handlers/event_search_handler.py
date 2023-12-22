@@ -14,7 +14,7 @@ search_event = Router()
 
 @search_event.message(Command("event_search"))
 async def start_event_search(message:types.Message, state: FSMContext):
-    await message.answer("Start searching enter type:", reply_markup=ReplyKeyboardMarkup(keyboard=event_type_opt))
+    await message.answer("Start searching enter type:", reply_markup=ReplyKeyboardMarkup(keyboard=event_type_opt, resize_keyboard=True))
     await state.set_state(Search.WaitingForType)
 
 @search_event.message(Search.WaitingForType)

@@ -8,7 +8,7 @@ from ..states.event_reg_states import Registration
 
 event_registration_router = Router()
 
-event_options = ["Concert", "Kvartirnik", "Audition", "Rehersal", "Gig", "Recording", "Tutor"]
+event_options = ["Концерт", "Квартирник", "Прослуховування", "Репетиція", "Виступ", "Запис", "Репетитор"]
 
 event_type_opt = [
     [KeyboardButton(text=option) for option in event_options]
@@ -17,7 +17,7 @@ event_type_opt = [
 
 @event_registration_router.message(Command("event_reg"))
 async def start_handler(message: types.Message, state: FSMContext):
-    keyboard = ReplyKeyboardMarkup(keyboard=event_type_opt)
+    keyboard = ReplyKeyboardMarkup(keyboard=event_type_opt, resize_keyboard=True)
     await message.answer("Що ви хочете зареєструвати сьогодні?", reply_markup=keyboard)
     await state.set_state(Registration.WaitingForType)
 
