@@ -53,7 +53,7 @@ async def set_date(message: types.Message, state: FSMContext):
     await state.update_data(event_description=message.text)
     data = await state.get_data()
     event_to_add = await add_event(data['event_name'], data['event_date'], data['event_location'],
-                                   data['event_description'])
+                                   data['event_description'], data['event_type'])
     if event_to_add:
         return await message.answer(f"Подію зареєстровано:{event_to_add}")
     else:

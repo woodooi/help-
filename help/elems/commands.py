@@ -28,6 +28,10 @@ async def set_commands(bot: Bot):
         BotCommand(
             command="profile",
             description="Ваш профіль"
+        ),
+        BotCommand(
+            command="event_search",
+            description="знайти івент за параметрами"
         )
     ]
     await bot.set_my_commands(commands, scope=BotCommandScopeDefault())
