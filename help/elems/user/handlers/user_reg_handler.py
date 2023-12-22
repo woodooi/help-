@@ -131,6 +131,7 @@ async def process_demo(message: types.Message, state: FSMContext):
         await state.update_data(demo=file_id)
     else: 
         await message.answer("Не чує баба! Спробуйте ще раз!")
+        return
     await message.answer("Останній крок! Надішліть опис свого профілю: ")
     
 
